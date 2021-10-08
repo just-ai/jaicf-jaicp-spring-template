@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:adminPassword@cluster0.oo5eb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+bot:
+  accessToken: ${JAICP_API_TOKEN}
+  mongoCollection: botContext
+  helloImageUrl: "https://media.giphy.com/media/ICOgUNjpvO0PC/source.gif"
+  byeImageUrl: "https://media.giphy.com/media/EE185t7OeMbTy/source.gif"
