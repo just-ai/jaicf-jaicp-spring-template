@@ -74,7 +74,7 @@ APP_OPTS="-Dlog.dir=$SERVICE_LOG_DIR\
           $LOG_CONFIG\
           -Dspring.config.location=classpath:/application.yml,optional:$SERVICE_CONF_DIR/application.yml,optional:$SERVICE_OVERRIDING_DIR/zone.application.yml,optional:$SERVICE_OVERRIDING_DIR/application.yml\
           -Djustai.config.location=$SERVICE_CONF_DIR\
-          -Dport=$PORT"
+          -DPORT=$PORT"
 
 ADDITIONAL_APP_OPTS=""
 

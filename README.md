@@ -1,6 +1,13 @@
 # JAICF Spring Bot template
 
-Here is a ready to use [JAICF](https://github.com/just-ai/jaicf-kotlin) bot template that uses [Spring](https://spring.io) and [MongoDB](https://mongodb.com).
+Here is a ready to use [JAICF](https://github.com/just-ai/jaicf-kotlin) bot template that utilises 
+
+- [Spring](https://spring.io)
+- [MongoDB](https://mongodb.com)
+- [Docker](https://docker.com)
+- [Prometheus](https://prometheus.io)
+- [Grafana](https://grafana.com)
+- [Graylog](https://graylog.org)
 
 # How to use
 
@@ -22,7 +29,7 @@ _Note that this file is ignored by git and won't be populated to your repository
 
 ## Configuration
 
-To overwrite default bot configuration, create `application.yml` file somewhere on the disk with required properties:
+To overwrite default bot configuration, create `application.yml` file in `docker/app/conf` with required properties:
 
 ```yaml
 bot:
@@ -31,15 +38,20 @@ bot:
 
 ## Build and run
 
-To build and run Docker image:
-
 1. Build project with `stage` gradle task
-2. Build Docker image with `docker build -t jaicf-jaicp-spring-template .`
-3. Run Docker image with `docker run -p 8080:8080 -v <directory with production application.yml>:/opt/jaicf/conf jaicf-jaicp-spring-template`
+2. Run `docker-compose up`
 
-Note that this builds a webhook version of your JAICF bot.
+This build script runs:
+
+- `http://localhost:3000` Grafana monitoring dashboards
+- `http://localhost:9000` Graylog logging system
+- `http://localhost:8080` Your JAICF bot endpoint
+
+>Note that this builds a webhook version of your JAICF bot.
 Thus, you have to propagate your local 8080 port to the global web (through some gateway like ngrok) and configure your JAICP project with direct public URL of your machine.
+
+3. Define your public JAICF bot webhook in the webhook settings of your JAICP project using `/webhook` (e.g. `https://somedomain.io/webhook`)
 
 ## Options
 
-You can override default running options in `scripts/run.sh`.
+You can override default running options for every service in the `docker` folder.

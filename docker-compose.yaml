@@ -1,0 +1,108 @@
+version: '3.7'
+
+volumes:
+  esdata:
+    driver: local
+  graylogdata:
+    driver: local
+  grafana:
+    driver: local
+  mongodata:
+    driver: local
+  prometheus:
+    driver: local
+  logs:
+    driver: local
+
+services:
+  app:
+    build: '.'
+    ports:
+      - 8080:8080
+    volumes:
+      - ./docker/app/conf:/opt/jaicf/conf
+      - logs:/var/log/jaicf
+    environment:
+      - MONGODB_URI=mongodb://mongo/jaicf-jaicp-spring-template
+      - GRAYLOG_SERVER=graylog
+      - GRAYLOG_PORT=12201
+      - GRAYLOG_APP=jaicf-jaicp-spring-template
+    links:
+      - "mongo:mongo.service"
+      - "graylog:graylog.service"
+    depends_on:
+      - mongo
+      - graylog
+
+  mongo:
+    image: mongo:4.1
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data
+
+  elasticsearch:
+    image: elasticsearch:7.14.1
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  graylog:
+    image: graylog/graylog:4.0
+    restart: always
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9000/
+    ports:
+      # HTTP
+      - 9000:9000
+      # Syslog TCP
+      - 1514:1514
+      # Syslog UDP
+      - 1514:1514/udp
+      # GELF TCP
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
+    volumes:
+      - graylogdata:/opt/graylog/data
+    links:
+      - elasticsearch
+      - mongo
+    depends_on:
+      - mongo
+      - elasticsearch
+
+  grafana:
+    build: './docker/grafana'
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    links:
+      - "app:app.service"

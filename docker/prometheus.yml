@@ -1,0 +1,6 @@
+scrape_configs:
+  - job_name: 'app_monitoring'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app.service:8080']

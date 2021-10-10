@@ -1,12 +1,40 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   error:
     include-message: always
 
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://admin:adminPassword@cluster0.oo5eb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+      uri: ${MONGODB_URI}
+  profiles:
+    active: "prod"
+  main:
+    banner-mode: off
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info
+
+logging:
+  pattern:
+    console: "%d [a:%X{accountId},c:%X{bot},r:%X{requestId}] %5p [%8c] - %m %n"
+    file: "%d [a:%X{accountId},c:%X{bot},r:%X{requestId}] %5p [%8c] - %m %n"
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      file-name-pattern: "main.%d.%i.log.gz"
+  file:
+    name: ${log.dir}/app.main.log
+  level:
+    "com.justai": debug
+    "org.springframework": warn
 
 bot:
   accessToken: ${JAICP_API_TOKEN}

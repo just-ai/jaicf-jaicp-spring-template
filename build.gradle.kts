@@ -17,14 +17,15 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("com.just-ai.jaicf:core:$jaicf")
@@ -33,6 +34,7 @@ dependencies {
     implementation("com.just-ai.jaicf:mongo:$jaicf")
 
     implementation("javax.servlet:javax.servlet-api:3.1.0")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.7.4")
 }
 
 tasks {
